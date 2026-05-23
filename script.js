@@ -1479,10 +1479,18 @@ function renderTimelineItem(event, index) {
       <button class="timeline-node" data-index="${index}" type="button" aria-label="Open details for ${escapeHtml(event.title)}">
         <span class="node-number">${index + 1}</span>
       </button>
+      <div class="timeline-meta" aria-hidden="true">
+        <span class="stage-num">Event ${String(index + 1).padStart(2, "0")}</span>
+        <strong>${escapeHtml(event.title)}</strong>
+      </div>
       <button class="timeline-card" data-index="${index}" type="button">
-        <span class="stage-num">Stage ${String(index + 1).padStart(2, "0")}</span>
+        <span class="watermark">${String(index + 1).padStart(2, "0")}</span>
         <span class="event-title">${escapeHtml(event.title)}</span>
         <span class="event-caption">${escapeHtml(event.caption)}</span>
+        <span class="event-card-footer">
+          <span>Open study drawer</span>
+          <span aria-hidden="true">+</span>
+        </span>
       </button>
     </div>${marker}`;
 }
@@ -1491,6 +1499,7 @@ function renderArticleCard(article) {
   const colors = getNodeColor(article.eventIndex);
 
   return `<a class="article-card" href="article.html?event=${encodeURIComponent(article.slug)}" style="--article-color:${colors.color}; --article-color-2:${colors.color2}">
+      <span class="watermark">${String(article.eventIndex + 1).padStart(2, "0")}</span>
       <span class="article-number">${String(article.eventIndex + 1).padStart(2, "0")}</span>
       <span class="article-card-title">${escapeHtml(article.title)}</span>
       <span class="article-card-summary">${escapeHtml(article.summary)}</span>
@@ -1519,9 +1528,8 @@ function renderArticlesIndex() {
 
   articlesIndex.innerHTML = `
     <header class="study-hero article-hero">
-      <p class="eyebrow">40 deeper studies</p>
       <h1>Articles</h1>
-      <p class="subtitle">Go deeper into each event from the timeline, with Scripture anchors, Ellen White reading paths, prophetic meaning, and Christ-centered application.</p>
+      <p class="subtitle">Explore each event more fully through Scripture, the great controversy theme, and practical preparation for a life anchored in Christ.</p>
     </header>
     <nav class="article-jump-nav" aria-label="Article phase links">
       ${phaseLinks}
@@ -1645,13 +1653,16 @@ function renderChart() {
       <h1>Timeline</h1>
       <p class="subtitle">Click any event to open the study drawer.</p>
     </div>
-    <div class="timeline" aria-label="Vertical chronological last-day events timeline">
+    <div class="timeline" id="timelineContainer" aria-label="Vertical chronological last-day events timeline">
+      <div class="scroll-line" id="scrollLine" aria-hidden="true"></div>
       ${timelineMarkup}
     </div>
   `;
 
-  chart.querySelectorAll(".timeline-card, .timeline-node").forEach((button) => {
-    button.addEventListener("click", () => selectEvent(Number(button.dataset.index)));
+  chart.addEventListener("click", (event) => {
+    const button = event.target.closest(".timeline-card, .timeline-node");
+    if (!button || !chart.contains(button)) return;
+    selectEvent(Number(button.dataset.index));
   });
 }
 
@@ -1703,7 +1714,28 @@ function selectEvent(index) {
   openDrawer();
 }
 
+function updateDrawerPosition() {
+  const timeline = document.getElementById("timelineContainer");
+  if (!timeline || window.matchMedia("(max-width: 780px)").matches) {
+    document.documentElement.style.removeProperty("--drawer-left");
+    document.documentElement.style.removeProperty("--drawer-width");
+    return;
+  }
+
+  const timelineRect = timeline.getBoundingClientRect();
+  const timelineLeft = getComputedStyle(document.documentElement).getPropertyValue("--timeline-left").trim();
+  const railRatio = timelineLeft.endsWith("%") ? Number.parseFloat(timelineLeft) / 100 : 0.4;
+  const railX = timelineRect.left + timelineRect.width * (Number.isFinite(railRatio) ? railRatio : 0.4);
+  const viewportWidth = document.documentElement.clientWidth || window.innerWidth;
+  const drawerLeft = Math.max(0, Math.min(viewportWidth - 320, railX));
+  const drawerWidth = Math.max(320, viewportWidth - drawerLeft);
+
+  document.documentElement.style.setProperty("--drawer-left", `${Math.round(drawerLeft)}px`);
+  document.documentElement.style.setProperty("--drawer-width", `${Math.round(drawerWidth)}px`);
+}
+
 function openDrawer() {
+  updateDrawerPosition();
   drawer.classList.add("open");
   drawer.setAttribute("aria-hidden", "false");
   backdrop.hidden = false;
@@ -1731,6 +1763,9 @@ if (chart) {
       closeDrawer();
     }
   });
+  window.addEventListener("resize", () => {
+    if (drawer.classList.contains("open")) updateDrawerPosition();
+  });
 }
 
 if (articlesIndex) {
@@ -1740,3 +1775,55 @@ if (articlesIndex) {
 if (articleReader) {
   renderArticleReader();
 }
+
+function updateNavProgress() {
+  const progress = document.querySelector("#navProgress");
+  if (!progress) return;
+  const scrollable = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const percent = scrollable > 0 ? (document.documentElement.scrollTop / scrollable) * 100 : 0;
+  progress.style.width = `${Math.max(0, Math.min(100, percent))}%`;
+}
+
+function updateTimelineProgress() {
+  const timelineContainer = document.querySelector("#timelineContainer");
+  const scrollLine = document.querySelector("#scrollLine");
+  if (!timelineContainer || !scrollLine) return;
+
+  const rect = timelineContainer.getBoundingClientRect();
+  const activationPoint = window.innerHeight * 0.5;
+  const progress = Math.max(0, Math.min(1, (activationPoint - rect.top) / rect.height));
+  scrollLine.style.transform = `scaleY(${progress})`;
+
+  timelineContainer.querySelectorAll(".timeline-node").forEach((node) => {
+    const nodeRect = node.getBoundingClientRect();
+    node.classList.toggle("viewed", nodeRect.top < activationPoint);
+  });
+}
+
+function initRevealEffects() {
+  const revealItems = document.querySelectorAll(".home-hero, .home-intro, .feature-card, .how-to-panel, .prophecy-books, .preparation-callout, .study-hero, .study-intro, .message-choice-card, .source-note, .timeline-header, .timeline-phase, .timeline-item, .present-marker, .article-jump-nav, .article-phase, .article-card, .article-reader-hero, .article-fact-panel, .article-body-section, .article-source-card");
+  revealItems.forEach((item) => item.classList.add("reveal-up"));
+
+  if (!("IntersectionObserver" in window)) {
+    revealItems.forEach((item) => item.classList.add("active"));
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) entry.target.classList.add("active");
+    });
+  }, { root: null, rootMargin: "0px 0px -10% 0px", threshold: 0.1 });
+
+  revealItems.forEach((item) => observer.observe(item));
+}
+
+function handleScrollEffects() {
+  updateNavProgress();
+  updateTimelineProgress();
+}
+
+initRevealEffects();
+handleScrollEffects();
+window.addEventListener("scroll", handleScrollEffects, { passive: true });
+window.addEventListener("resize", handleScrollEffects);
