@@ -1555,6 +1555,17 @@ dd {
   margin-bottom: 0;
 }
 
+.article-essay-section {
+  border-left: 0;
+  padding-left: 0;
+}
+
+.article-essay-section p {
+  color: var(--muted);
+  font-size: clamp(1.05rem, 1.3vw, 1.18rem);
+  line-height: 1.76;
+}
+
 .article-source-card {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1887,6 +1898,37 @@ dd {
   .detail-drawer.open {
     transform: translateY(0);
   }
+}
+
+.event-caption:empty,
+.phase-header p:empty,
+.article-phase-heading p:empty,
+.article-card-summary:empty,
+.article-reader-hero > p:empty,
+.article-fact-panel p:empty,
+.article-fact-panel ul:empty,
+.article-source-card ul:empty,
+.study-hero .subtitle:empty,
+#detailSummary:empty,
+#basicWhat:empty,
+#egwEmphasis:empty,
+#detailDescription:empty,
+#symbolMeaning:empty,
+#peopleAffected:empty,
+#propheticIssue:empty,
+#furtherReading:empty,
+.compact-list:empty,
+.source-list:empty,
+#detailNotes:empty,
+#sequenceList:empty {
+  display: none;
+}
+
+.article-body-section,
+.article-fact-panel > div,
+.article-source-card > div,
+.drawer-card {
+  min-height: 72px;
 }
 
 /* Presentation redesign */
@@ -4264,21 +4306,26 @@ h3,
 .detail-drawer {
   z-index: 110;
   align-content: start;
+  grid-auto-rows: max-content;
   gap: 12px;
   border-left: 4px solid var(--carmine);
   background: rgba(249, 248, 246, 0.99);
   box-shadow: -24px 0 70px rgba(0, 0, 0, 0.22);
   padding: 24px;
+  overflow-x: hidden;
 }
 
 .detail-drawer .drawer-card,
 .detail-drawer .overview-card {
+  min-height: 0;
+  height: auto;
   overflow: visible;
+  overflow-wrap: anywhere;
 }
 
 .detail-drawer .overview-card {
   border-bottom: 1px solid var(--alabaster-300);
-  padding-bottom: 22px;
+  padding-bottom: 18px;
 }
 
 .drawer-close {
@@ -4294,9 +4341,11 @@ h3,
 
 #detailTitle {
   font-family: var(--serif);
-  font-size: clamp(2.35rem, 4vw, 3.45rem);
+  font-size: clamp(1.85rem, 3vw, 2.85rem);
   font-weight: 600;
-  line-height: 1;
+  line-height: 1.08;
+  margin-bottom: 10px;
+  overflow-wrap: anywhere;
 }
 
 #detailSummary,
@@ -4309,6 +4358,7 @@ h3,
 .further-card p {
   color: var(--muted);
   line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
 .description-box,
