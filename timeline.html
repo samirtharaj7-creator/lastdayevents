@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chronology of Last Day Events</title>
+    <link rel="stylesheet" href="styles.css?v=dossier-ui-53">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand-link" href="index.html" aria-label="Last Day Events home">
+        <span class="brand-mark" aria-hidden="true">
+          <span class="brand-hourglass">
+            <span class="glass-top"></span>
+            <span class="glass-stream"></span>
+            <span class="glass-bottom"></span>
+          </span>
+        </span>
+        <span class="brand-copy">
+          <span class="brand-title">Last Day Events</span>
+          <span class="brand-subtitle">Prophecy study guide</span>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Primary navigation">
+      <a href="index.html">Home</a>
+      <a href="timeline.html" aria-current="page">Timeline</a>
+      <a href="articles.html">Articles</a>
+      <a href="three-angels.html">Three Angels' Messages</a>
+      </nav>
+      <div class="nav-progress" id="navProgress" aria-hidden="true"></div>
+    </header>
+
+    <main class="page">
+      <section class="poster-panel" aria-labelledby="chart-title">
+        <div class="poster-scroll">
+          <div id="chart" class="chart" aria-label="Interactive chronology chart"></div>
+        </div>
+      </section>
+    </main>
+
+    <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+    <aside class="detail-drawer" id="detailDrawer" aria-hidden="true" aria-live="polite">
+      <button class="drawer-close" id="drawerClose" type="button" aria-label="Close event details">×</button>
+      <section class="drawer-card overview-card">
+        <p class="drawer-kicker" id="detailPhase">Study guide</p>
+        <h2 id="detailTitle">Click a timeline event</h2>
+        <p id="detailSummary"></p>
+      </section>
+
+      <section class="drawer-card basics-card">
+        <h3>The Basics</h3>
+        <div class="answer-stack">
+          <div class="answer-block">
+            <span class="question-label">What is it?</span>
+            <p id="basicWhat"></p>
+          </div>
+          <div class="answer-block">
+            <span class="question-label">Bible anchors</span>
+            <ul class="compact-list" id="scriptureList"></ul>
+          </div>
+          <div class="answer-block">
+            <span class="question-label">Ellen White emphasis</span>
+            <p id="egwEmphasis"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="drawer-card placement-card">
+        <h3>Chronology & Context</h3>
+        <dl class="placement-grid">
+          <div>
+            <dt>Timeline place</dt>
+            <dd id="placementCurrent"></dd>
+          </div>
+          <div>
+            <dt>Before</dt>
+            <dd id="placementBefore"></dd>
+          </div>
+          <div>
+            <dt>Next</dt>
+            <dd id="placementNext"></dd>
+          </div>
+          <div>
+            <dt>Duration / scope</dt>
+            <dd id="durationScope"></dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="drawer-card description-box">
+        <h3>Detailed Explanation</h3>
+        <div id="detailDescription"></div>
+      </section>
+
+      <section class="drawer-card meaning-card">
+        <h3>Prophetic Meaning</h3>
+        <div class="answer-stack">
+          <div class="answer-block">
+            <span class="question-label">Symbols and issue</span>
+            <p id="symbolMeaning"></p>
+          </div>
+          <div class="answer-block">
+            <span class="question-label">Who is affected?</span>
+            <p id="peopleAffected"></p>
+          </div>
+          <div class="answer-block">
+            <span class="question-label">Why it matters</span>
+            <p id="propheticIssue"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="drawer-card related-sequence" id="relatedSequence" hidden>
+        <h3 id="sequenceHeading">Related Sequence</h3>
+        <ol id="sequenceList"></ol>
+      </section>
+
+      <div class="drawer-card reference-box">
+        <h3>Warning and Promise</h3>
+        <ul id="detailNotes"></ul>
+      </div>
+
+      <section class="drawer-card source-card">
+        <h3>Primary Ellen White Sources</h3>
+        <ul class="source-list" id="primarySources"></ul>
+        <h3>Study Summary</h3>
+        <ul class="source-list" id="supportingSources"></ul>
+      </section>
+
+      <section class="drawer-card further-card">
+        <h3>For Further Details</h3>
+        <p id="furtherReading"></p>
+        <a class="learn-more-link" id="articleLink" href="articles.html">Learn more about this event</a>
+      </section>
+    </aside>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <a class="footer-brand" href="index.html">Last Day Events</a>
+        <nav aria-label="Footer navigation">
+          <a href="timeline.html">Timeline</a>
+          <a href="articles.html">Articles</a>
+          <a href="three-angels.html">Three Angels' Messages</a>
+        </nav>
+        <p>Prophecy study guide</p>
+      </div>
+    </footer>
+    <script src="event-content.js?v=dossier-ui-53"></script>
+    <script src="scripture-texts.js?v=dossier-ui-53"></script>
+    <script src="script.js?v=dossier-ui-53"></script>
+  </body>
+</html>
