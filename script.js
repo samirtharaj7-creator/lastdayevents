@@ -722,15 +722,6 @@ function renderTopArticleLinks(previous, next) {
   `;
 }
 
-function renderArticleToolbox(article) {
-  const read = isArticleRead(article.slug);
-
-  return `<section class="article-toolbox" aria-label="Article study tools">
-      <button id="readToggle" type="button" data-read="${read ? "true" : "false"}">${read ? "Mark unread" : "Mark as read"}</button>
-      <button id="printArticle" type="button">Print / Save PDF</button>
-    </section>`;
-}
-
 function renderArticleSequenceStrip(article, previous, next) {
   const phase = getPhaseForIndex(article.eventIndex);
   const phasePosition = phase ? `${article.eventIndex - phase.start + 1} of ${phase.end - phase.start + 1} in this phase` : "";
@@ -790,7 +781,6 @@ function renderArticleReader() {
         <p>${escapeHtml(article.summary)}</p>
       </header>
 
-      ${renderArticleToolbox(article)}
       ${renderArticleSequenceStrip(article, previous, next)}
 
       <aside class="article-fact-panel" aria-label="Article facts">
@@ -831,15 +821,6 @@ function renderArticleReader() {
       ${renderArticlePager(previous, next, "article-pager-bottom")}
     </article>
   `;
-
-  document.querySelector("#readToggle")?.addEventListener("click", (event) => {
-    const nextState = event.currentTarget.dataset.read !== "true";
-    setArticleRead(article.slug, nextState);
-    renderArticleReader();
-    enhanceStudyText(articleReader);
-  });
-
-  document.querySelector("#printArticle")?.addEventListener("click", () => window.print());
 }
 
 function renderChart() {
