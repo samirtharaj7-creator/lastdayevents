@@ -70,8 +70,6 @@ const closeButton = document.querySelector("#drawerClose");
 const articlesIndex = document.querySelector("#articlesIndex");
 const articleReader = document.querySelector("#articleReader");
 
-const READ_ARTICLES_KEY = "lastDayEventsReadArticles";
-
 const glossaryTerms = [
   {
     term: "Judgment Hour",
@@ -174,8 +172,7 @@ function getScriptureText(reference) {
 
 const articleFilters = {
   query: "",
-  phase: "all",
-  status: "all"
+  phase: "all"
 };
 
 function escapeHtml(value) {
@@ -195,29 +192,6 @@ function slugify(value) {
     .replace(/^-+|-+$/g, "");
 }
 
-function getReadArticles() {
-  try {
-    return new Set(JSON.parse(localStorage.getItem(READ_ARTICLES_KEY) || "[]"));
-  } catch {
-    return new Set();
-  }
-}
-
-function saveReadArticles(readArticles) {
-  localStorage.setItem(READ_ARTICLES_KEY, JSON.stringify([...readArticles]));
-}
-
-function isArticleRead(slug) {
-  return getReadArticles().has(slug);
-}
-
-function setArticleRead(slug, isRead) {
-  const readArticles = getReadArticles();
-  if (isRead) readArticles.add(slug);
-  else readArticles.delete(slug);
-  saveReadArticles(readArticles);
-}
-
 function getArticleSearchText(article) {
   return [
     article.title,
@@ -234,15 +208,11 @@ function getArticleSearchText(article) {
 
 function getFilteredArticles() {
   const query = articleFilters.query.trim().toLowerCase();
-  const readArticles = getReadArticles();
 
   return articleData.filter((article) => {
     const phaseMatch = articleFilters.phase === "all" || String(article.eventIndex) === articleFilters.phase || getPhaseForIndex(article.eventIndex)?.title === articleFilters.phase;
-    const statusMatch = articleFilters.status === "all"
-      || (articleFilters.status === "read" && readArticles.has(article.slug))
-      || (articleFilters.status === "unread" && !readArticles.has(article.slug));
     const queryMatch = !query || getArticleSearchText(article).includes(query);
-    return phaseMatch && statusMatch && queryMatch;
+    return phaseMatch && queryMatch;
   });
 }
 
@@ -591,12 +561,10 @@ function openTimelineHash() {
 
 function renderArticleCard(article) {
   const colors = getNodeColor(article.eventIndex);
-  const read = isArticleRead(article.slug);
 
-  return `<a class="article-card${read ? " is-read" : ""}" href="article.html?event=${encodeURIComponent(article.slug)}" style="--article-color:${colors.color}; --article-color-2:${colors.color2}">
+  return `<a class="article-card" href="article.html?event=${encodeURIComponent(article.slug)}" style="--article-color:${colors.color}; --article-color-2:${colors.color2}">
       <span class="watermark">${String(article.eventIndex + 1).padStart(2, "0")}</span>
       <span class="article-number">${String(article.eventIndex + 1).padStart(2, "0")}</span>
-      ${read ? `<span class="read-badge">Read</span>` : ""}
       <span class="article-card-title">${escapeHtml(article.title)}</span>
       <span class="article-card-summary">${escapeHtml(article.summary)}</span>
       <span class="article-card-link">Read full article</span>
@@ -606,7 +574,6 @@ function renderArticleCard(article) {
 function renderArticlesIndex() {
   const filteredArticles = getFilteredArticles();
   const filteredIndexes = new Set(filteredArticles.map((article) => article.eventIndex));
-  const readCount = getReadArticles().size;
   const phaseLinks = timelinePhases.map((phase, index) => `<a href="#articles-phase-${index}">${escapeHtml(phase.title)}</a>`).join("");
   const phaseOptions = timelinePhases.map((phase) => `<option value="${escapeHtml(phase.title)}"${articleFilters.phase === phase.title ? " selected" : ""}>${escapeHtml(phase.title)}</option>`).join("");
   const phaseMarkup = timelinePhases.map((phase, phaseIndex) => {
@@ -646,16 +613,8 @@ function renderArticlesIndex() {
           ${phaseOptions}
         </select>
       </div>
-      <div>
-        <label for="articleStatusFilter">Progress</label>
-        <select id="articleStatusFilter">
-          <option value="all"${articleFilters.status === "all" ? " selected" : ""}>All articles</option>
-          <option value="unread"${articleFilters.status === "unread" ? " selected" : ""}>Unread only</option>
-          <option value="read"${articleFilters.status === "read" ? " selected" : ""}>Read only</option>
-        </select>
-      </div>
       <button id="articleFilterReset" type="button">Reset</button>
-      <p class="tool-result-count">${filteredArticles.length} of ${articleData.length} articles shown · ${Math.min(readCount, articleData.length)} read</p>
+      <p class="tool-result-count">${filteredArticles.length} of ${articleData.length} articles shown</p>
     </section>
     <nav class="article-jump-nav" aria-label="Article phase links">
       ${phaseLinks}
@@ -665,7 +624,6 @@ function renderArticlesIndex() {
 
   const searchInput = document.querySelector("#articleSearch");
   const phaseFilter = document.querySelector("#articlePhaseFilter");
-  const statusFilter = document.querySelector("#articleStatusFilter");
   const resetButton = document.querySelector("#articleFilterReset");
 
   searchInput?.addEventListener("input", (event) => {
@@ -680,16 +638,9 @@ function renderArticlesIndex() {
     enhanceStudyText(articlesIndex);
   });
 
-  statusFilter?.addEventListener("change", (event) => {
-    articleFilters.status = event.target.value;
-    renderArticlesIndex();
-    enhanceStudyText(articlesIndex);
-  });
-
   resetButton?.addEventListener("click", () => {
     articleFilters.query = "";
     articleFilters.phase = "all";
-    articleFilters.status = "all";
     renderArticlesIndex();
     enhanceStudyText(articlesIndex);
   });

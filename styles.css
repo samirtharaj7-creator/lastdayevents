@@ -5224,7 +5224,7 @@ h3,
 
 .study-tool-panel {
   display: grid;
-  grid-template-columns: minmax(220px, 1.2fr) minmax(160px, 0.8fr) minmax(150px, 0.7fr) auto;
+  grid-template-columns: minmax(220px, 1.2fr) minmax(160px, 0.8fr) auto;
   align-items: end;
   gap: 12px;
   width: min(100%, 1180px);
@@ -5257,9 +5257,7 @@ h3,
   font: inherit;
 }
 
-.study-tool-panel button,
-.article-toolbox button,
-.article-toolbox a {
+.study-tool-panel button {
   display: inline-flex;
   min-height: 44px;
   align-items: center;
@@ -5276,9 +5274,7 @@ h3,
   cursor: pointer;
 }
 
-.study-tool-panel button:hover,
-.article-toolbox button:hover,
-.article-toolbox a:hover {
+.study-tool-panel button:hover {
   border-color: var(--carmine);
   background: var(--carmine);
 }
@@ -5288,38 +5284,6 @@ h3,
   margin: 2px 0 0;
   color: var(--muted);
   font-size: 0.94rem;
-}
-
-.read-badge {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  z-index: 2;
-  border: 1px solid color-mix(in srgb, var(--article-color) 45%, var(--alabaster-300));
-  background: color-mix(in srgb, var(--article-color) 12%, #fff);
-  color: var(--article-color);
-  padding: 6px 9px;
-  font-size: 0.62rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.article-card.is-read {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--article-color) 5%, #fff), #fff);
-}
-
-.article-toolbox {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 16px 0;
-}
-
-.article-toolbox a {
-  background: var(--alabaster-100);
-  color: var(--ink);
-  border-color: var(--alabaster-400);
 }
 
 .article-sequence-strip {
@@ -5805,13 +5769,6 @@ h3,
     grid-template-columns: 1fr;
   }
 
-  .article-toolbox {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-
-  .article-toolbox button,
-  .article-toolbox a,
   .study-tool-panel button {
     width: 100%;
   }
@@ -5860,7 +5817,6 @@ h3,
   .site-header,
   .site-footer,
   .article-breadcrumb,
-  .article-toolbox,
   .article-pager,
   .article-jump-nav,
   .nav-progress,
